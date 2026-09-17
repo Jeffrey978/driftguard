@@ -1,0 +1,11 @@
+{
+  "headers": [
+    {
+      "source": "/DriftGuard-MVP-test-build.zip",
+      "headers": [
+        { "key": "Content-Type", "value": "application/zip" },
+        { "key": "Content-Disposition", "value": "attachment; filename=\"DriftGuard-MVP-test-build.zip\"" }
+      ]
+    }
+  ]
+}

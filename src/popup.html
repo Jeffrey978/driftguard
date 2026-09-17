@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>DriftGuard</title>
+    <link rel="stylesheet" href="popup.css">
+  </head>
+  <body>
+    <main class="cockpit">
+      <header class="topbar">
+        <div class="brand-lockup">
+          <div class="brand-mark" aria-hidden="true"><span>D</span></div>
+          <div class="brand-copy">
+            <p class="eyebrow">DriftGuard</p>
+            <h1>Stay with the work</h1>
+          </div>
+        </div>
+        <div class="status-pill">
+          <div class="status-dot" id="statusDot" aria-hidden="true"></div>
+          <span id="statusLabel">Idle</span>
+        </div>
+      </header>
+
+      <section id="emptyState" class="focus-plate">
+        <div class="plate-head">
+          <div>
+            <p class="kicker">New session</p>
+            <h2>Set the thread</h2>
+          </div>
+          <div class="domain-readout">
+            <span>Current</span>
+            <strong id="currentDomainPreview">-</strong>
+          </div>
+        </div>
+
+        <label class="intent-label" for="intentionInput">What are you protecting?</label>
+        <div class="intent-box">
+          <textarea id="intentionInput" rows="3" placeholder="Study this Coursera lesson"></textarea>
+        </div>
+
+        <div class="quick-intents" aria-label="Quick session templates">
+          <button type="button" data-template="Study this lesson">Study</button>
+          <button type="button" data-template="Write the next draft">Write</button>
+          <button type="button" data-template="Fix the current bug">Build</button>
+        </div>
+
+        <div class="control-grid">
+          <label class="control-card">
+            <span>Length</span>
+            <select id="durationSelect">
+              <option value="0">No timer</option>
+              <option value="25">25 min</option>
+              <option value="45" selected>45 min</option>
+              <option value="90">90 min</option>
+            </select>
+          </label>
+
+          <label class="control-card">
+            <span>Sensitivity</span>
+            <select id="sensitivitySelect">
+              <option value="calm">Calm</option>
+              <option value="balanced" selected>Balanced</option>
+              <option value="strict">Strict</option>
+            </select>
+          </label>
+        </div>
+
+        <label class="allow-row">
+          <input type="checkbox" id="allowCurrentDomain" checked>
+          <span>
+            <strong>Trust this tab</strong>
+            <small>Allow the current domain for this session.</small>
+          </span>
+        </label>
+
+        <details class="domain-details">
+          <summary>Also allow other domains</summary>
+          <label class="domain-dock" for="allowedDomainsInput">
+            <textarea id="allowedDomainsInput" rows="2" placeholder="github.com, docs.google.com"></textarea>
+          </label>
+        </details>
+
+        <button id="startSessionButton" class="launch-button">Start session</button>
+      </section>
+
+      <section id="activeState" class="focus-plate live-plate hidden">
+        <div class="live-header">
+          <div class="live-beacon" aria-hidden="true">
+            <span></span>
+          </div>
+          <div>
+            <p class="kicker">Live session</p>
+            <h2 id="activeIntention"></h2>
+          </div>
+        </div>
+
+        <dl class="telemetry-grid">
+          <div>
+            <dt>Elapsed</dt>
+            <dd id="elapsedTime">0m</dd>
+          </div>
+          <div>
+            <dt>Current</dt>
+            <dd id="currentDomain">-</dd>
+          </div>
+          <div>
+            <dt>Prompts</dt>
+            <dd id="promptCount">0</dd>
+          </div>
+          <div>
+            <dt>Saved</dt>
+            <dd id="savedCount">0</dd>
+          </div>
+        </dl>
+
+        <div class="command-grid">
+          <button id="pauseButton">Pause</button>
+          <button id="saveCurrentButton">Save page</button>
+          <button id="openRecapButton">Open recap</button>
+          <button id="endSessionButton" class="danger">End session</button>
+        </div>
+      </section>
+
+      <section class="utility-panel">
+        <button id="settingsToggle" class="utility-toggle" aria-expanded="false">
+          <span>Privacy controls</span>
+          <b aria-hidden="true">+</b>
+        </button>
+        <div id="settingsBody" class="settings hidden">
+          <label class="allow-row compact-row">
+            <input type="checkbox" id="trackTitlesCheckbox">
+            <span>
+              <strong>Track tab titles</strong>
+              <small>Used only during active sessions.</small>
+            </span>
+          </label>
+
+          <label class="domain-dock" for="excludedDomainsInput">
+            <span>Never track domains</span>
+            <textarea id="excludedDomainsInput" rows="2" placeholder="bank.com, health.example"></textarea>
+          </label>
+
+          <div class="settings-actions">
+            <button id="saveSettingsButton">Save settings</button>
+            <button id="clearDataButton" class="danger subtle">Delete data</button>
+          </div>
+
+          <p class="privacy">
+            Local by default. No keystrokes, screenshots, page contents, passwords, or activity outside active sessions.
+          </p>
+        </div>
+      </section>
+
+      <section id="recentSection" class="history-panel hidden">
+        <div class="section-head">
+          <p class="kicker">History</p>
+          <h2>Recent sessions</h2>
+        </div>
+        <div id="recentSessions" class="recent-list"></div>
+      </section>
+
+      <p id="notice" class="notice" role="status"></p>
+    </main>
+    <script src="popup.js" type="module"></script>
+  </body>
+</html>

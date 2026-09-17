@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>DriftGuard Recap</title>
+    <link rel="stylesheet" href="recap.css">
+  </head>
+  <body>
+    <main class="page">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">DriftGuard recap</p>
+          <h1 id="sessionTitle">Session recap</h1>
+          <p id="sessionMeta" class="meta"></p>
+        </div>
+        <div class="hero-actions">
+          <button id="exportButton">Export JSON</button>
+          <button id="exportCsvButton">Export CSV</button>
+        </div>
+      </header>
+
+      <section id="errorState" class="panel hidden"></section>
+
+      <section id="recapContent" class="hidden">
+        <p id="caughtHeadline" class="caught-headline"></p>
+
+        <section class="metric-grid">
+          <article class="metric">
+            <span>Total session</span>
+            <strong id="totalTime">0m</strong>
+          </article>
+          <article class="metric">
+            <span>Tracked time</span>
+            <strong id="trackedTime">0m</strong>
+          </article>
+          <article class="metric">
+            <span>Possible drift</span>
+            <strong id="driftTime">0m</strong>
+          </article>
+          <article class="metric">
+            <span>Interventions</span>
+            <strong id="interventionCount">0</strong>
+          </article>
+        </section>
+
+        <section class="layout">
+          <article class="panel">
+            <div class="section-head">
+              <h2>Top domains</h2>
+            </div>
+            <div id="domainList" class="domain-list"></div>
+          </article>
+
+          <article class="panel">
+            <div class="section-head">
+              <h2>Prompt responses</h2>
+            </div>
+            <div id="responseList" class="response-list"></div>
+          </article>
+        </section>
+
+        <section class="layout">
+          <article class="panel">
+            <div class="section-head">
+              <h2>Saved for later</h2>
+            </div>
+            <div id="savedList" class="saved-list"></div>
+          </article>
+
+          <article class="panel">
+            <div class="section-head">
+              <h2>Drift moments</h2>
+            </div>
+            <div id="interventionList" class="intervention-list"></div>
+          </article>
+        </section>
+      </section>
+    </main>
+    <script src="recap.js" type="module"></script>
+  </body>
+</html>

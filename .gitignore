@@ -1,0 +1,9 @@
+node_modules/
+dist/
+*.log
+.DS_Store
+Thumbs.db
+
+# Internal planning doc: pricing, validation thresholds, abandon criteria.
+# Kept local so the public repo carries the product, not the strategy.
+DriftGuard_PRD_and_MVP.md
