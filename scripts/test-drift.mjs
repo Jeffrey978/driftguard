@@ -232,6 +232,42 @@ await test("shouldLockAfterBreak: unknown pages without a verdict get the card",
   assert.equal(afterBreak("example.org", "unknown"), false);
 });
 
+// --- timing: site time and the five-minute safety net ---------------------
+
+const calm = session({ sensitivity: "calm", intention: "check website ui", intentionType: "research" });
+const drift = (obs, events = [], sess = calm) =>
+  computeDriftScore({ session: sess, observation: obs, settings, events, now: NOW });
+const visit = (domain, endedMinsAgo, seconds, extra = {}) => ({
+  sessionId: "s1", domain, category: "ambiguous", endedAt: NOW - endedMinsAgo * 60000, durationSeconds: seconds, ...extra
+});
+
+await test("site time survives a new URL on the same site (autoplay)", () => {
+  const fresh = { ...observation("www.youtube.com", 5, "Next video"), domainSince: NOW - 400 * 1000 };
+  const result = drift(fresh);
+  assert.ok(result.reasons.includes("Over five minutes here"), result.reasons.join(" | "));
+});
+await test("five minutes of split-up drift in ten earns a check-in, even on calm", () => {
+  const events = [visit("reddit.com", 8, 90), visit("www.youtube.com", 6, 120), visit("x.com", 2, 60)];
+  const result = drift(observation("www.youtube.com", 40, "Random vlog"), events);
+  assert.ok(result.reasons.includes("About five minutes off task"), result.reasons.join(" | "));
+  assert.ok(result.score >= SENSITIVITY_THRESHOLDS.calm, `score ${result.score}`);
+});
+await test("safety net ignores old drift, on-task AI visits and trusted sites", () => {
+  const events = [
+    visit("reddit.com", 14, 200),
+    visit("www.youtube.com", 5, 200, { ai: "on_task" }),
+    visit("x.com", 3, 200)
+  ];
+  const trusted = session({ sensitivity: "calm", intention: "check website ui", allowedDomains: ["x.com"] });
+  const result = drift(observation("www.youtube.com", 40, "Random vlog"), events, trusted);
+  assert.ok(!result.reasons.includes("About five minutes off task"), result.reasons.join(" | "));
+});
+await test("safety net spares a page whose title matches the task", () => {
+  const events = [visit("reddit.com", 6, 300)];
+  const result = drift(observation("www.youtube.com", 40, "How to check website UI quickly"), events);
+  assert.ok(!result.reasons.includes("About five minutes off task"), result.reasons.join(" | "));
+});
+
 for (const { name, error } of failures) {
   console.error(`  FAIL ${name}\n       ${error.message.split("\n")[0]}`);
 }

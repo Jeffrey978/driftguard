@@ -8,6 +8,10 @@ export const SENSITIVITY_THRESHOLDS = {
   strict: 44
 };
 
+// Drift time that earns a first check-in on any sensitivity, counted over a window.
+const DRIFT_CHECKIN_SECONDS = 5 * 60;
+const DRIFT_WINDOW_SECONDS = 10 * 60;
+
 export const DRIFT_REMINDER_INTERVAL_MINUTES = {
   calm: 4,
   balanced: 2,
@@ -155,7 +159,10 @@ export function shouldLockAfterBreak({ url, domain, session, category, ai = null
 function computeRuleScore({ session, observation, settings, events, now }) {
   const reasons = [];
   let score = 0;
-  const durationSeconds = Math.max(0, Math.round((now - observation.startedAt) / 1000));
+  const durationSeconds = Math.max(
+    0,
+    Math.round((now - (observation.domainSince || observation.startedAt)) / 1000)
+  );
   const category = getDomainCategory(observation.domain, session);
 
   if (isExcludedDomain(observation.domain, settings.excludedDomains)) {
@@ -259,6 +266,33 @@ function computeRuleScore({ session, observation, settings, events, now }) {
   if (repeatedDistractor && ["ambiguous", "distracting"].includes(category)) {
     score += 10;
     reasons.push("Back on the same site again");
+  }
+
+  // Safety net: about five minutes on distractions in the last ten, however it
+  // was split up (autoplay, hopping between sites, stepping away mid-video),
+  // is enough for a first check-in. An on-topic page title still protects.
+  if (
+    ["ambiguous", "distracting"].includes(category) &&
+    titleOverlapCount(session.intention, observation.title) < 2
+  ) {
+    const driftSeconds =
+      durationSeconds +
+      (events || [])
+        .filter(
+          (event) =>
+            event.sessionId === session.id &&
+            now - event.endedAt <= DRIFT_WINDOW_SECONDS * 1000 &&
+            event.endedAt <= (observation.domainSince || observation.startedAt) &&
+            ["ambiguous", "distracting"].includes(event.category) &&
+            event.ai !== "on_task" &&
+            !isAllowedDomain(event.domain, session.allowedDomains)
+        )
+        .reduce((sum, event) => sum + (Number(event.durationSeconds) || 0), 0);
+    if (driftSeconds >= DRIFT_CHECKIN_SECONDS) {
+      const threshold = SENSITIVITY_THRESHOLDS[session.sensitivity] ?? SENSITIVITY_THRESHOLDS.balanced;
+      score = Math.max(score + 30, threshold);
+      reasons.push("About five minutes off task");
+    }
   }
 
   if (category === "work") score -= 24;

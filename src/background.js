@@ -207,9 +207,11 @@ chrome.alarms.onAlarm.addListener((alarm) => {
 if (chrome.idle) {
   chrome.idle.setDetectionInterval(IDLE_THRESHOLD_SECONDS);
   chrome.idle.onStateChanged.addListener((state) => {
-    fireAndForget("idle", () =>
-      state === "active" ? observeActiveTab("idle-active") : finalizeObservation(`idle-${state}`)
-    );
+    fireAndForget("idle", async () => {
+      if (state === "active") return observeActiveTab("idle-active");
+      if (state === "idle" && (await isPlayingMedia(await getActiveTab()))) return;
+      return finalizeObservation(`idle-${state}`);
+    });
   });
 }
 
@@ -352,14 +354,31 @@ async function handleTick() {
   if (session.status !== "active") return;
 
   // Away from the keyboard: don't restart observation, or AFK time gets
-  // counted as tracked time and prompts fire at an empty chair.
+  // counted as tracked time and prompts fire at an empty chair. Watching a
+  // video is the exception: no input for a minute is normal there.
   const idleState = await queryIdleState(IDLE_THRESHOLD_SECONDS);
-  if (idleState !== "active") {
+  if (idleState === "locked" || (idleState === "idle" && !(await isPlayingMedia(await getActiveTab())))) {
     await finalizeObservation(`idle-${idleState}`);
     return;
   }
 
   await observeActiveTab("tick");
+}
+
+async function isPlayingMedia(tab) {
+  if (!tab?.id || tab.incognito || !isTrackableUrl(tab.url || "")) return false;
+  if (tab.audible) return true;
+  try {
+    // Muted or silent video still counts; check every frame for embeds.
+    const results = await chrome.scripting.executeScript({
+      target: { tabId: tab.id, allFrames: true },
+      func: () =>
+        Array.from(document.querySelectorAll("video")).some((v) => !v.paused && !v.ended && v.readyState > 2)
+    });
+    return results.some((frame) => frame?.result === true);
+  } catch {
+    return false;
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -880,6 +899,9 @@ async function observeTab(tab, reason) {
 
   await finalizeObservation(`switch-${reason}`);
 
+  // Autoplay and in-site links change the URL; the time on the site keeps counting.
+  const sameSite = current && current.sessionId === session.id && current.tabId === tab.id && current.domain === domain;
+
   const observation = {
     sessionId: session.id,
     tabId: tab.id,
@@ -887,6 +909,7 @@ async function observeTab(tab, reason) {
     url: tab.url,
     domain,
     title,
+    domainSince: sameSite ? current.domainSince || current.startedAt : Date.now(),
     startedAt: Date.now(),
     lastSeenAt: Date.now(),
     reason

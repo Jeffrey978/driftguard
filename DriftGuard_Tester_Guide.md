@@ -49,7 +49,8 @@ If you tested an earlier build, remove it on `chrome://extensions` first.
   - Option+Shift+S saves the current tab for later.
   - Option+Shift+F starts a session with your last intention, or ends the one that is running.
 - **New recap.** It includes a focus score, the sites you visited coloured by category, the last 7 days, and **Copy summary**.
-- **Pausing.** Sessions pause automatically while you are away from the computer. You can also pause by hand.
+- **Pausing.** Sessions pause automatically while you are away from the computer (a playing video doesn't count as away). You can also pause by hand.
+- **Timing.** On YouTube or social sites the first check-in usually comes after about a minute. About five minutes of drift in any ten-minute stretch always brings one.
 - **Settings.** Click the gear in the popup to change sensitivity, your daily goal, title tracking, excluded sites, or to delete your data.
 - **Dark mode.** DriftGuard follows your system theme.
 - **Lock screen (new in 0.3).** If you keep drifting, the check-in moves to the centre of the screen. This happens after you've taken a break, or on the third prompt of the same drift. The page is blurred and paused.

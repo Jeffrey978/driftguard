@@ -61,7 +61,8 @@ Chrome 116 or newer is required.
   - Each level costs about 60 × level XP.
 - **Toolbar badge.** Shows minutes left, `||` while paused, and `brk` during a break.
 - **Timed sessions finish on their own.** A notification tells you the XP you earned and the recap opens.
-- **Pausing.** Sessions pause while you are away from the computer, and resume when you're back.
+- **Pausing.** Sessions pause while you are away from the computer, and resume when you're back. Watching a video doesn't count as away.
+- **Timing.** About five minutes on distracting sites in any ten-minute stretch always earns a check-in, however it's split up.
 - **Settings.**
   - Sensitivity: calm, balanced or strict.
   - Daily goal.
