@@ -1,15 +1,16 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "cleanUrls": true,
+  "framework": "nextjs",
   "headers": [
     {
-      "source": "/DriftGuard-MVP-test-build.zip",
+      "source": "/downloads/driftguard-extension.zip",
       "headers": [
         { "key": "Content-Type", "value": "application/zip" },
         {
           "key": "Content-Disposition",
-          "value": "attachment; filename=\"DriftGuard-MVP-test-build.zip\""
-        }
+          "value": "attachment; filename=\"driftguard-extension.zip\""
+        },
+        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
       ]
     }
   ]

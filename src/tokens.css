@@ -1,0 +1,294 @@
+/* DriftGuard design tokens. Source of truth: DESIGN.md. Shared by popup + recap. */
+
+@font-face {
+  font-family: "Manrope";
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url("../fonts/manrope-latin-wght.woff2") format("woff2-variations"),
+    url("../fonts/manrope-latin-wght.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308,
+    U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Manrope";
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url("../fonts/manrope-latin-ext-wght.woff2") format("woff2-variations"),
+    url("../fonts/manrope-latin-ext-wght.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
+    U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+:root {
+  color-scheme: light;
+  --bg: #f7f6f4;
+  --surface: #ffffff;
+  --surface-2: #f1efec;
+  --line: #e9e6e1;
+  --ink: #1a1a1a;
+  --ink-2: #5b5955;
+  --ink-3: #9a968f;
+  --brand: #e5552e;
+  --brand-strong: #c8401c;
+  --brand-soft: #fdede6;
+  --crimson: #b8202a;
+  --good: #1f9d6b;
+  --good-soft: #e3f4ec;
+  --warn: #e0a21b;
+  --warn-soft: #fbf1da;
+
+  --cat-work: var(--good);
+  --cat-research: #3f7fd0;
+  --cat-communication: #8a6ad8;
+  --cat-ambiguous: var(--warn);
+  --cat-distracting: var(--crimson);
+  --cat-unknown: var(--ink-3);
+
+  --gradient: linear-gradient(135deg, #ff8a4c 0%, #e5552e 45%, #b8202a 100%);
+  --shadow: 0 1px 2px rgb(26 26 26 / 0.04), 0 8px 24px -8px rgb(26 26 26 / 0.1);
+  --shadow-lift: 0 1px 2px rgb(26 26 26 / 0.05), 0 16px 36px -14px rgb(26 26 26 / 0.18);
+  --ring: 0 0 0 3px rgb(229 85 46 / 0.28);
+
+  --r-control: 10px;
+  --r-card: 16px;
+  --r-panel: 24px;
+
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --t-hover: 160ms;
+  --t-enter: 280ms;
+  --t-hero: 420ms;
+
+  --font: "Manrope", ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --bg: #121110;
+    --surface: #1c1a19;
+    --surface-2: #252321;
+    --line: #302d2a;
+    --ink: #f4f1ec;
+    --ink-2: #b4afa8;
+    --ink-3: #7c776f;
+    --brand: #ff6b3d;
+    --brand-strong: #ff8457;
+    --brand-soft: #3a1f16;
+    --crimson: #e0434c;
+    --good: #3bc38d;
+    --good-soft: #17342a;
+    --warn: #f2b83a;
+    --warn-soft: #3a2f16;
+    --cat-research: #6aa2ea;
+    --cat-communication: #a88ef0;
+    --shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px -8px rgb(0 0 0 / 0.5);
+    --shadow-lift: 0 1px 2px rgb(0 0 0 / 0.35), 0 16px 36px -14px rgb(0 0 0 / 0.6);
+    --ring: 0 0 0 3px rgb(255 107 61 / 0.35);
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-optical-sizing: auto;
+}
+
+/* Thin, quiet scrollbars on both macOS (overlay) and Windows (classic). */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--line);
+  border: 3px solid transparent;
+  border-radius: 999px;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--ink-3);
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+:focus {
+  outline: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+input:focus-visible,
+textarea:focus-visible {
+  outline: none;
+}
+
+::selection {
+  background: var(--brand-soft);
+  color: var(--ink);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+}
+
+kbd {
+  display: inline-flex;
+  align-items: center;
+  min-height: 20px;
+  padding: 0 6px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  border-bottom-width: 2px;
+  background: var(--surface);
+  color: var(--ink-2);
+  font-family: var(--font);
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.cat-work { --cat: var(--cat-work); }
+.cat-research { --cat: var(--cat-research); }
+.cat-communication { --cat: var(--cat-communication); }
+.cat-ambiguous { --cat: var(--cat-ambiguous); }
+.cat-distracting { --cat: var(--cat-distracting); }
+.cat-unknown { --cat: var(--cat-unknown); }
+
+.chip-cat {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 24px;
+  padding: 0 10px 0 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--cat) 14%, transparent);
+  color: color-mix(in srgb, var(--cat) 80%, var(--ink));
+  font-size: 12px;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+.chip-cat::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--cat);
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(0.82) rotate(-6deg);
+  }
+  60% {
+    transform: scale(1.06) rotate(3deg);
+  }
+  100% {
+    transform: scale(1) rotate(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Drop movement, keep gentle opacity changes. */
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .motion-fade {
+    animation: fade-in 200ms ease both !important;
+  }
+}
