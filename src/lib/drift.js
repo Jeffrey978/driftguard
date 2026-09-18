@@ -142,6 +142,16 @@ export function decidePromptMode({ breaksTaken = 0, promptCount = 0 } = {}) {
   return "card";
 }
 
+// A break that ends on a distraction goes straight to the lock; the friendly
+// "Break's over" card is for people already back on the work. Unknown pages
+// get the card: they score low on the rules for being unknown, not for being fine.
+export function shouldLockAfterBreak({ url, domain, session, category, ai = null }) {
+  if (isAlignedSurface({ domain }, session, category, ai)) return false;
+  if (url && url === session.lastAlignedUrl) return false;
+  if (ai === "off_task") return true;
+  return category === "distracting" || category === "ambiguous";
+}
+
 function computeRuleScore({ session, observation, settings, events, now }) {
   const reasons = [];
   let score = 0;

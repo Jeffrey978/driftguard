@@ -37,7 +37,7 @@ If you tested an earlier build, remove it on `chrome://extensions` first.
    - **Back to work** takes you back to your last on-task tab.
    - **It's for work** trusts that site for this session only.
    - **Save for later** parks the tab in the popup.
-   - **Break 5m** or **Break 10m**. When the break ends, you get **Back to work** or **5 more minutes**.
+   - **Break 5m** or **Break 10m**. When the break ends, you get **Back to work** or **5 more minutes**. If you're still on a distracting site (YouTube, Reddit, social, streaming) when it ends, you get the full-screen lock instead.
 9. End the session from the popup, or let a timed session finish. Either way the recap opens.
 
 ## New in this build

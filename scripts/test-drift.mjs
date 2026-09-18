@@ -7,6 +7,7 @@ import {
   pickPromptReason,
   pickReason,
   SENSITIVITY_THRESHOLDS,
+  shouldLockAfterBreak,
   verdictStance
 } from "../src/lib/drift.js";
 import { isAlignedEvent } from "../src/lib/progress.js";
@@ -203,6 +204,32 @@ await test("decidePromptMode: third prompt of a drift locks", () => {
 });
 await test("decidePromptMode: any break taken locks from the first prompt", () => {
   assert.equal(decidePromptMode({ breaksTaken: 1, promptCount: 1 }), "lock");
+});
+
+const afterBreak = (domain, category, extra = {}) =>
+  shouldLockAfterBreak({ url: `https://${domain}/x`, domain, category, session: session(), ...extra });
+
+await test("shouldLockAfterBreak: break ending on a distraction locks", () => {
+  assert.equal(afterBreak("www.youtube.com", "ambiguous"), true);
+  assert.equal(afterBreak("instagram.com", "distracting"), true);
+});
+await test("shouldLockAfterBreak: back on the work gets the friendly card", () => {
+  assert.equal(afterBreak("docs.google.com", "work"), false);
+  assert.equal(
+    afterBreak("www.youtube.com", "ambiguous", { session: session({ allowedDomains: ["youtube.com"] }) }),
+    false
+  );
+  assert.equal(
+    afterBreak("www.youtube.com", "ambiguous", { session: session({ lastAlignedUrl: "https://www.youtube.com/x" }) }),
+    false
+  );
+});
+await test("shouldLockAfterBreak: the AI verdict decides either way", () => {
+  assert.equal(afterBreak("www.youtube.com", "ambiguous", { ai: "on_task" }), false);
+  assert.equal(afterBreak("example.org", "unknown", { ai: "off_task" }), true);
+});
+await test("shouldLockAfterBreak: unknown pages without a verdict get the card", () => {
+  assert.equal(afterBreak("example.org", "unknown"), false);
 });
 
 for (const { name, error } of failures) {

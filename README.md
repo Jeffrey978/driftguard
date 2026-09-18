@@ -39,7 +39,7 @@ Chrome 116 or newer is required.
   - **Save for later**
   - **Break 5m** or **Break 10m**
 
-  When a break ends, a follow-up offers **Back to work** or **5 more minutes**.
+  When a break ends, a follow-up offers **Back to work** or **5 more minutes**, or, if you're still on a distracting page, the full-screen lock.
 - **Lock screen for repeat drift.** A check-in becomes a centre-screen lock if you've already taken a break this session, or on the third prompt of the same drift. The lock blurs and dims the page, pauses video and audio, and blocks scrolling. Escape and clicking outside do nothing, and there's no close button.
   - **Back to work** works straight away.
   - **I really need this** unlocks after a visible 15-second countdown, and then trusts the site for the session.

@@ -14,6 +14,7 @@ import {
   getDriftReminderIntervalMs,
   isAlignedSurface,
   pickPromptReason,
+  shouldLockAfterBreak,
   verdictStance
 } from "./lib/drift.js";
 import {
@@ -962,7 +963,9 @@ function promptAssets(mood = "alert") {
   };
 }
 
-async function maybeTriggerIntervention(observation) {
+// breakReturn: the break just ended on a distraction (see lockIfDriftingAfterBreak),
+// so skip the threshold and reminder interval and go straight to the lock.
+async function maybeTriggerIntervention(observation, { breakReturn = false } = {}) {
   const session = await getActiveSession();
   if (!session || session.status !== "active") return;
 
@@ -988,7 +991,7 @@ async function maybeTriggerIntervention(observation) {
 
   const threshold = SENSITIVITY_THRESHOLDS[session.sensitivity] || SENSITIVITY_THRESHOLDS.balanced;
 
-  if (score.score < threshold) {
+  if (score.score < threshold && !breakReturn) {
     // An unanswered prompt must not be dismissable by switching tabs. Only a
     // genuine return to the work clears it; a merely-quiet tab (a new tab page,
     // an unclassified site) leaves the drift watch standing so the question
@@ -1025,14 +1028,19 @@ async function maybeTriggerIntervention(observation) {
 
   const driftWatch = session.driftWatch?.status === "active" ? session.driftWatch : null;
   const shouldPrompt =
-    !driftWatch || !driftWatch.lastPromptAt || now - driftWatch.lastPromptAt >= getDriftReminderIntervalMs(session);
+    breakReturn ||
+    !driftWatch ||
+    !driftWatch.lastPromptAt ||
+    now - driftWatch.lastPromptAt >= getDriftReminderIntervalMs(session);
 
   if (!shouldPrompt) return;
 
   const promptCount = (driftWatch?.promptCount || 0) + 1;
   const interventionId = createId();
-  const mode = decidePromptMode({ breaksTaken: session.breaksTaken, promptCount });
-  const { reason, source: reasonSource } = pickPromptReason(score);
+  const mode = breakReturn ? "lock" : decidePromptMode({ breaksTaken: session.breaksTaken, promptCount });
+  const picked = pickPromptReason(score);
+  const { reason, source: reasonSource } =
+    breakReturn && picked.source !== "ai" ? { reason: "Your break is over.", source: "rules" } : picked;
   const unlockAt = mode === "lock" ? now + LOCK_UNLOCK_SECONDS * 1000 : null;
 
   const nextDriftWatch = {
@@ -1318,9 +1326,13 @@ async function handleBreakEnd() {
     return;
   }
 
+  await updateActiveSession({ ...session, breakUntil: null, breakMinutes: null, breakEndPromptId: null });
+
+  // Still on a distraction when the break runs out: that is the moment lock mode is for.
+  if (await lockIfDriftingAfterBreak()) return;
+
   const breakEndId = createId();
-  const cleared = { ...session, breakUntil: null, breakMinutes: null, breakEndPromptId: breakEndId };
-  await updateActiveSession(cleared);
+  const cleared = await updateActiveSession({ ...(await getActiveSession()), breakEndPromptId: breakEndId });
 
   // The in-page card is the friendly path; OS notifications are the fallback
   // for pages we can't draw on (chrome://, the Web Store, PDFs).
@@ -1334,6 +1346,34 @@ async function handleBreakEnd() {
     buttons: [{ title: "Back to work" }, { title: "5 more minutes" }],
     priority: 2
   });
+}
+
+async function lockIfDriftingAfterBreak() {
+  const tab = await getActiveTab();
+  if (!tab?.id || !tab.url || !isTrackableUrl(tab.url) || tab.incognito) return false;
+
+  const session = await getActiveSession();
+  if (!session || session.status !== "active") return false;
+
+  const settings = await getSettings();
+  const domain = extractDomain(tab.url);
+  if (!domain || isExcludedDomain(domain, settings.excludedDomains)) return false;
+
+  const ai = settings.aiCheck ? verdictStance(lookupVerdict(session.aiVerdicts, tab.url)) : null;
+  const category = getDomainCategory(domain, session);
+  if (!shouldLockAfterBreak({ url: tab.url, domain, session, category, ai })) return false;
+
+  // Start watching the tab again; if that alone raised a prompt it is already a lock.
+  await observeTab(tab, "break-end");
+  if ((await getActiveSession())?.driftWatch?.awaitingResponse) return true;
+
+  const { [STORAGE_KEYS.currentObservation]: observation } = await storage.get({
+    [STORAGE_KEYS.currentObservation]: null
+  });
+  if (!observation || observation.tabId !== tab.id) return false;
+
+  await maybeTriggerIntervention(observation, { breakReturn: true });
+  return Boolean((await getActiveSession())?.driftWatch?.awaitingResponse);
 }
 
 async function showBreakEndOverlay(session, breakEndId) {

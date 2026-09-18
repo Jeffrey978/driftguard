@@ -81,7 +81,8 @@ Verdicts are cached per URL (hash stripped) for the session. Explicitly trusted 
 
 The normal prompt is a corner card. It escalates to a full-screen lock when, in the same session:
 
-1. a break has already been taken and the user drifts again, or
+1. a break ends while the user is still on a distraction (a distracting or ambiguous site, or an
+   AI "not related" verdict), or a break has already been taken and the user drifts again, or
 2. the same drift has been ignored through 3 prompts.
 
 Lock: page blurred and dimmed behind a wide centred card, page media paused, scroll locked,
