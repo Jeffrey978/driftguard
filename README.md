@@ -121,7 +121,7 @@ The zip contains the following, all inside a top-level `DriftGuard/` folder:
 
 ### AI check endpoint
 
-The AI check sends requests to `AI_ENDPOINT` in `src/lib/config.js`. By default this is `https://driftguard.vercel.app/api/relevance`, the site's `/api/relevance` route. Change it to point at your own deployment, then rebuild. The request and response contract is in `AI_CHECK.md`.
+The AI check sends requests to `AI_ENDPOINT` in `src/lib/config.js`. By default this is `https://driftguard-murex.vercel.app/api/relevance`, the site's `/api/relevance` route. Change it to point at your own deployment, then rebuild. The request and response contract is in `AI_CHECK.md`.
 
 For local testing, leave the constant alone and set **Settings → AI check → Advanced → AI endpoint**, for example to `http://localhost:3000/api/relevance`. Plain `http://` is accepted only for `localhost`, `127.0.0.1` and `[::1]`. Every other address must use `https://`.
 
