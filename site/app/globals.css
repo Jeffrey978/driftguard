@@ -1,0 +1,312 @@
+@import "tailwindcss";
+
+/* ── DriftGuard tokens (see /DESIGN.md) ─────────────────────────────── */
+:root {
+  --bg: #f7f6f4;
+  --surface: #ffffff;
+  --surface-2: #f1efec;
+  --line: #e9e6e1;
+  --ink: #1a1a1a;
+  --ink-2: #5b5955;
+  --ink-3: #9a968f;
+  --brand: #e5552e;
+  --brand-strong: #c8401c;
+  --brand-soft: #fdede6;
+  --crimson: #b8202a;
+  --good: #1f9d6b;
+  --warn: #e0a21b;
+
+  --brand-gradient: linear-gradient(135deg, #ff8a4c 0%, #e5552e 45%, #b8202a 100%);
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --shadow-soft: 0 1px 2px rgb(26 26 26 / 0.04), 0 8px 24px -8px rgb(26 26 26 / 0.1);
+
+  color-scheme: light;
+}
+
+@theme {
+  --color-bg: #f7f6f4;
+  --color-surface: #ffffff;
+  --color-surface-2: #f1efec;
+  --color-line: #e9e6e1;
+  --color-ink: #1a1a1a;
+  --color-ink-2: #5b5955;
+  --color-ink-3: #9a968f;
+  --color-brand: #e5552e;
+  --color-brand-strong: #c8401c;
+  --color-brand-soft: #fdede6;
+  --color-crimson: #b8202a;
+  --color-good: #1f9d6b;
+  --color-warn: #e0a21b;
+
+  --radius-ctl: 10px;
+  --radius-card: 16px;
+  --radius-panel: 24px;
+
+  --shadow-soft: 0 1px 2px rgb(26 26 26 / 0.04), 0 8px 24px -8px rgb(26 26 26 / 0.1);
+  --shadow-lift: 0 1px 2px rgb(26 26 26 / 0.05), 0 18px 40px -16px rgb(26 26 26 / 0.18);
+
+  --ease-soft: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@theme inline {
+  --font-sans: var(--font-manrope), ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-weight: 500;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: #ffd6c6;
+  color: var(--ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
+}
+
+.display {
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.02;
+  text-wrap: balance;
+}
+
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Hero entrance: CSS so the headline paints before hydration ──────── */
+@keyframes dg-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.rise {
+  animation: dg-rise 420ms var(--ease) both;
+  animation-delay: calc(var(--i, 0) * 70ms + 60ms);
+}
+
+/* ── Live dot in the hero badge ─────────────────────────────────────── */
+@keyframes dg-ping {
+  0% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  80%,
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+
+.ping {
+  animation: dg-ping 1.8s var(--ease) infinite;
+}
+
+/* ── Demo: AI check scan over the fake page ─────────────────────────── */
+@keyframes dg-scan {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(440px);
+  }
+}
+
+.scan-sweep {
+  animation: dg-scan 1.15s var(--ease) infinite;
+}
+
+@keyframes dg-dot {
+  0%,
+  80%,
+  100% {
+    opacity: 0.25;
+  }
+  40% {
+    opacity: 1;
+  }
+}
+
+.scan-dot {
+  animation: dg-dot 1s ease-in-out infinite both;
+}
+
+/* ── "Works with" marquee ───────────────────────────────────────────── */
+@keyframes dg-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-track {
+  animation: dg-marquee 28s linear infinite;
+}
+
+.fade-edges {
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 18%, #000 82%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0, #000 18%, #000 82%, transparent 100%);
+}
+
+/* ── Hero page backdrop: pale, cool, a little lavender at the edges ─── */
+.hero-backdrop {
+  background:
+    radial-gradient(90% 70% at 100% 100%, rgb(208 214 234 / 0.85) 0%, transparent 60%),
+    radial-gradient(70% 60% at 100% 0%, rgb(220 230 244 / 0.9) 0%, transparent 65%),
+    radial-gradient(60% 60% at 0% 100%, rgb(226 228 240 / 0.7) 0%, transparent 70%),
+    linear-gradient(135deg, #fdfdfe 0%, #f1f4f9 45%, #e2e7f1 100%);
+}
+
+/* ── Hero frame bezel ───────────────────────────────────────────────── */
+.frame-ring {
+  position: relative;
+  border-radius: 34px;
+  padding: 12px;
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.72), rgb(255 255 255 / 0.38));
+  border: 1px solid rgb(255 255 255 / 0.85);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.95),
+    inset 0 -1px 0 rgb(180 190 215 / 0.35),
+    0 1px 2px rgb(26 26 26 / 0.04),
+    0 24px 48px -24px rgb(40 50 80 / 0.18),
+    0 40px 80px -30px rgb(40 50 80 / 0.25);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  backdrop-filter: blur(14px) saturate(1.2);
+}
+
+.frame-ring::before {
+  /* the faint cyan-white glint along the top edge */
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 12%;
+  right: 12%;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(214 250 255 / 0.95) 30%,
+    #fff 50%,
+    rgb(214 250 255 / 0.95) 70%,
+    transparent
+  );
+  filter: blur(0.5px);
+  pointer-events: none;
+}
+
+@media (max-width: 640px) {
+  .frame-ring {
+    border-radius: 26px;
+    padding: 7px;
+  }
+}
+
+/* ── Reeded glass stripes ───────────────────────────────────────────── */
+.reed {
+  position: relative;
+  height: 100%;
+  flex: 1 1 0;
+  -webkit-backdrop-filter: blur(22px) saturate(1.15);
+  backdrop-filter: blur(22px) saturate(1.15);
+  background: linear-gradient(
+    90deg,
+    rgb(255 255 255 / calc(var(--hi, 0.16) + 0.06)) 0%,
+    rgb(255 255 255 / var(--hi, 0.16)) 6%,
+    rgb(255 244 236 / 0.04) 38%,
+    rgb(120 16 24 / var(--lo, 0.06)) 100%
+  );
+  box-shadow:
+    inset 1px 0 0 rgb(255 255 255 / 0.2),
+    inset -1px 0 0 rgb(90 10 20 / 0.05);
+}
+
+/* ── FAQ accordion (native details) ─────────────────────────────────── */
+.faq summary {
+  list-style: none;
+  cursor: pointer;
+}
+
+.faq summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq .chev {
+  transition: transform 280ms var(--ease);
+}
+
+.faq details[open] .chev {
+  transform: rotate(45deg);
+}
+
+.faq details::details-content {
+  block-size: 0;
+  overflow: hidden;
+  transition:
+    block-size 280ms var(--ease),
+    content-visibility 280ms allow-discrete;
+}
+
+.faq details[open]::details-content {
+  block-size: auto;
+}
+
+@supports (interpolate-size: allow-keywords) {
+  :root {
+    interpolate-size: allow-keywords;
+  }
+}
+
+/* ── Reduced motion: keep fades, drop movement ──────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .rise {
+    animation-name: dg-fade;
+  }
+  .marquee-track,
+  .ping {
+    animation: none;
+  }
+  /* Keep the scan as a still tint; the dots may still fade. */
+  .scan-sweep {
+    animation: none;
+    transform: translateY(120px);
+  }
+  .faq .chev,
+  .faq details::details-content {
+    transition: none;
+  }
+}
+
+@keyframes dg-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

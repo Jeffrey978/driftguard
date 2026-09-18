@@ -3,80 +3,185 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>DriftGuard Recap</title>
+    <meta name="color-scheme" content="light dark">
+    <title>Session recap · DriftGuard</title>
+    <link rel="icon" href="../icons/icon32.png">
+    <link rel="preload" href="../fonts/manrope-latin-wght.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="tokens.css">
     <link rel="stylesheet" href="recap.css">
   </head>
   <body>
+    <canvas id="confetti" class="confetti" aria-hidden="true"></canvas>
+
     <main class="page">
-      <header class="hero">
-        <div>
-          <p class="eyebrow">DriftGuard recap</p>
-          <h1 id="sessionTitle">Session recap</h1>
-          <p id="sessionMeta" class="meta"></p>
+      <nav class="topbar">
+        <div class="brand">
+          <img src="../icons/icon32.png" alt="" width="22" height="22">
+          <span>DriftGuard</span>
         </div>
-        <div class="hero-actions">
-          <button id="exportButton">Export JSON</button>
-          <button id="exportCsvButton">Export CSV</button>
+        <div class="top-actions">
+          <button class="btn btn-quiet" type="button" id="exportJsonButton" disabled>Export JSON</button>
+          <button class="btn btn-quiet" type="button" id="exportCsvButton" disabled>Export CSV</button>
         </div>
-      </header>
+      </nav>
 
-      <section id="errorState" class="panel hidden"></section>
-
-      <section id="recapContent" class="hidden">
-        <p id="caughtHeadline" class="caught-headline"></p>
-
-        <section class="metric-grid">
-          <article class="metric">
-            <span>Total session</span>
-            <strong id="totalTime">0m</strong>
-          </article>
-          <article class="metric">
-            <span>Tracked time</span>
-            <strong id="trackedTime">0m</strong>
-          </article>
-          <article class="metric">
-            <span>Possible drift</span>
-            <strong id="driftTime">0m</strong>
-          </article>
-          <article class="metric">
-            <span>Interventions</span>
-            <strong id="interventionCount">0</strong>
-          </article>
-        </section>
-
-        <section class="layout">
-          <article class="panel">
-            <div class="section-head">
-              <h2>Top domains</h2>
-            </div>
-            <div id="domainList" class="domain-list"></div>
-          </article>
-
-          <article class="panel">
-            <div class="section-head">
-              <h2>Prompt responses</h2>
-            </div>
-            <div id="responseList" class="response-list"></div>
-          </article>
-        </section>
-
-        <section class="layout">
-          <article class="panel">
-            <div class="section-head">
-              <h2>Saved for later</h2>
-            </div>
-            <div id="savedList" class="saved-list"></div>
-          </article>
-
-          <article class="panel">
-            <div class="section-head">
-              <h2>Drift moments</h2>
-            </div>
-            <div id="interventionList" class="intervention-list"></div>
-          </article>
-        </section>
+      <section class="state-card hidden" id="loadingState" aria-busy="true">
+        <div class="mascot" data-mascot="thinking" data-size="96"></div>
+        <p>Gathering your session...</p>
       </section>
+
+      <section class="state-card hidden" id="errorState" role="alert">
+        <div class="mascot" data-mascot="thinking" data-size="96"></div>
+        <h1>Nothing to show here</h1>
+        <p id="errorText"></p>
+      </section>
+
+      <div id="recapContent" class="recap hidden">
+        <header class="hero card">
+          <div class="hero-main">
+            <div class="mascot hero-mascot" id="heroMascot" data-mascot="celebrate" data-size="112"></div>
+            <div class="hero-copy">
+              <p class="hero-kicker" id="heroKicker">Session complete</p>
+              <h1 id="heroTitle">Nice work.</h1>
+              <p class="hero-intent">
+                <svg viewBox="0 0 20 20" width="15" height="15" aria-hidden="true"><circle cx="10" cy="10" r="7" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="10" cy="10" r="3" fill="currentColor"/></svg>
+                <span id="heroIntent"></span>
+              </p>
+              <p class="hero-meta" id="heroMeta"></p>
+              <div class="hero-actions">
+                <button class="btn btn-primary" type="button" id="copyButton">
+                  <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><rect x="7" y="7" width="9" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M13 4.5H6a2 2 0 0 0-2 2V14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+                  <span id="copyLabel">Copy summary</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="score" aria-labelledby="scoreLabel">
+            <svg class="score-ring" viewBox="0 0 140 140" aria-hidden="true">
+              <defs>
+                <linearGradient id="scoreGradient" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stop-color="#FF8A4C"/>
+                  <stop offset=".45" stop-color="#E5552E"/>
+                  <stop offset="1" stop-color="#B8202A"/>
+                </linearGradient>
+              </defs>
+              <circle class="score-track" cx="70" cy="70" r="60"/>
+              <circle class="score-fill" id="scoreFill" cx="70" cy="70" r="60"/>
+            </svg>
+            <div class="score-center">
+              <strong class="num" id="scoreValue">0%</strong>
+              <span id="scoreLabel">focus score</span>
+            </div>
+            <p class="score-verdict" id="scoreVerdict"></p>
+          </div>
+        </header>
+
+        <p class="levelup hidden" id="levelUp" role="status">
+          <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M10 2.5l2.2 4.6 5 .7-3.6 3.5.9 5-4.5-2.4-4.5 2.4.9-5L2.8 7.8l5-.7z" fill="currentColor"/></svg>
+          <span id="levelUpText"></span>
+        </p>
+
+        <section class="stats" aria-label="Session numbers">
+          <article class="stat card">
+            <span class="stat-label">Focused</span>
+            <strong class="num" id="focusedTime">0m</strong>
+            <span class="stat-sub" id="focusedSub"></span>
+          </article>
+          <article class="stat card">
+            <span class="stat-label">Session</span>
+            <strong class="num" id="sessionTime">0m</strong>
+            <span class="stat-sub" id="sessionSub"></span>
+          </article>
+          <article class="stat card">
+            <span class="stat-label">Drifts caught</span>
+            <strong class="num" id="caughtCount">0</strong>
+            <span class="stat-sub" id="caughtSub"></span>
+          </article>
+          <article class="stat card">
+            <span class="stat-label">Came back</span>
+            <strong class="num" id="recoveredCount">0</strong>
+            <span class="stat-sub" id="recoveredSub"></span>
+          </article>
+        </section>
+
+        <section class="progress-row" aria-label="Progress">
+          <article class="card prog prog-xp">
+            <div class="prog-head">
+              <span class="stat-label">XP gained</span>
+              <strong class="num xp-big" id="xpGained">+0</strong>
+            </div>
+            <ul class="xp-parts" id="xpParts"></ul>
+          </article>
+          <article class="card prog">
+            <div class="prog-head">
+              <span class="stat-label">Streak</span>
+              <strong class="num" id="streakValue">0 days</strong>
+            </div>
+            <div class="streak-dots" id="streakDots" aria-hidden="true"></div>
+            <p class="prog-note" id="streakNote"></p>
+          </article>
+          <article class="card prog">
+            <div class="prog-head">
+              <span class="stat-label">Level <span class="num" id="levelValue">1</span></span>
+              <strong class="num prog-small"><span id="levelInto">0</span> / <span id="levelNeeded">60</span> XP</strong>
+            </div>
+            <span class="meter"><span id="levelMeter"></span></span>
+            <p class="prog-note" id="levelNote"></p>
+          </article>
+        </section>
+
+        <section class="grid-2">
+          <article class="card panel">
+            <div class="panel-head">
+              <h2>Where the time went</h2>
+              <span class="panel-meta num" id="trackedMeta"></span>
+            </div>
+            <ul class="bars" id="domainBars"></ul>
+            <div class="legend" id="domainLegend"></div>
+          </article>
+
+          <article class="card panel">
+            <div class="panel-head">
+              <h2>Last 7 days</h2>
+              <span class="panel-meta num" id="weekMeta"></span>
+            </div>
+            <div class="week" id="weekChart" role="img"></div>
+          </article>
+        </section>
+
+        <section class="grid-2">
+          <article class="card panel">
+            <div class="panel-head">
+              <h2>How you answered</h2>
+            </div>
+            <ul class="responses" id="responseList"></ul>
+          </article>
+
+          <article class="card panel">
+            <div class="panel-head">
+              <h2>Saved for later</h2>
+              <span class="panel-meta num" id="savedMeta"></span>
+            </div>
+            <ul class="links" id="savedList"></ul>
+          </article>
+        </section>
+
+        <section class="card panel" id="momentsPanel">
+          <div class="panel-head">
+            <h2>Drift moments</h2>
+          </div>
+          <ol class="moments" id="momentList"></ol>
+        </section>
+
+        <footer class="foot">
+          Everything on this page lives only in your browser.
+        </footer>
+      </div>
     </main>
+
+    <p class="notice" id="notice" role="status" aria-live="polite"></p>
+
     <script src="recap.js" type="module"></script>
   </body>
 </html>

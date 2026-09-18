@@ -1,8 +1,9 @@
 {
   "manifest_version": 3,
   "name": "DriftGuard",
-  "version": "0.1.0",
-  "description": "Catch browser drift before it becomes a lost hour.",
+  "version": "0.3.0",
+  "description": "Catch browser drift before it becomes a lost hour. Local-first focus sessions, streaks and recaps.",
+  "minimum_chrome_version": "116",
   "permissions": ["tabs", "storage", "idle", "alarms", "scripting", "notifications"],
   "host_permissions": ["<all_urls>"],
   "incognito": "split",
@@ -25,5 +26,34 @@
       "48": "icons/icon48.png",
       "128": "icons/icon128.png"
     }
-  }
+  },
+  "commands": {
+    "_execute_action": {
+      "suggested_key": {
+        "default": "Alt+Shift+D",
+        "mac": "Alt+Shift+D"
+      },
+      "description": "Open DriftGuard"
+    },
+    "save-for-later": {
+      "suggested_key": {
+        "default": "Alt+Shift+S",
+        "mac": "Alt+Shift+S"
+      },
+      "description": "Save the current tab for later"
+    },
+    "toggle-focus": {
+      "suggested_key": {
+        "default": "Alt+Shift+F",
+        "mac": "Alt+Shift+F"
+      },
+      "description": "Start or end a focus session"
+    }
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["fonts/*", "assets/mascot/*"],
+      "matches": ["<all_urls>"]
+    }
+  ]
 }

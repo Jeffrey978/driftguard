@@ -1,9 +1,15 @@
 {
   "name": "driftguard-mvp",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "private": true,
   "type": "module",
   "scripts": {
-    "check": "node --check src/background.js && node --check src/content.js && node --check src/popup.js && node --check src/recap.js"
+    "check": "node --check src/background.js && node --check src/content.js && node --check src/popup.js && node --check src/recap.js && node --check src/mascot.js && node --check src/lib/domains.js && node --check src/lib/drift.js && node --check src/lib/progress.js && node --check src/lib/ai.js && node --check src/lib/config.js && node --check src/lib/lock.js && node --check scripts/build-extension.mjs && node --check scripts/test-domains.mjs && node --check scripts/test-progress.mjs && node --check scripts/test-drift.mjs && node --check scripts/test-ai.mjs",
+    "test": "node scripts/test-domains.mjs && node scripts/test-progress.mjs && node scripts/test-drift.mjs && node scripts/test-ai.mjs",
+    "build:ext": "node scripts/build-extension.mjs"
+  },
+  "devDependencies": {
+    "@fontsource-variable/manrope": "^5.3.0",
+    "fflate": "^0.8.3"
   }
 }
