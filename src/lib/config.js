@@ -4,7 +4,7 @@
 // it at your own deployment of the site's /api/relevance route (see AI_CHECK.md).
 // For local development, leave this alone and set Settings → Advanced →
 // "AI endpoint" to e.g. http://localhost:3000/api/relevance instead.
-export const AI_ENDPOINT = "https://driftguard.vercel.app/api/relevance";
+export const AI_ENDPOINT = "https://driftguard-murex.vercel.app/api/relevance";
 
 // When to check: a page must hold the tab this long before it is sent.
 export const AI_DWELL_MS = 6000;
