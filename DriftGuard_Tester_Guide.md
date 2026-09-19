@@ -102,13 +102,15 @@ During a session DriftGuard records:
 - links you saved
 - daily focus totals
 
-It never records (and with the AI check on, never stores):
+It never records:
 
 - keystrokes, passwords or form input
-- screenshots
-- page contents
 - incognito windows
 - anything outside a session
+
+Screenshots and page text are only ever read for an AI check, and only if you
+switch that on. They are sent, answered, and thrown away — never written to
+disk, here or on the server.
 
 ## Reset
 

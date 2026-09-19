@@ -148,11 +148,15 @@ DriftGuard records only while a session is active:
 It never records:
 
 - keystrokes, form input or passwords
-- screenshots
 - clipboard contents, except when you press **Copy summary**
-- full page contents
 - incognito windows
 - anything outside a session
+
+Nothing is ever stored outside your machine. With the AI check off — the
+default — nothing leaves your browser at all. With it on, a screenshot and
+some page text are sent for each check and discarded once the answer comes
+back; neither is written down anywhere. The section below says exactly what
+that covers.
 
 ### The AI check (off by default)
 

@@ -23,7 +23,7 @@ const CATEGORY_LABELS = {
 };
 
 const DATA_COPY_LOCAL =
-  "Everything stays in this browser. No account, no server, no keystrokes, no screenshots, nothing outside a session.";
+  "Everything stays in this browser. No account, no keystrokes, nothing outside a session. Turning on the AI check is the one thing that sends anything out.";
 const DATA_COPY_AI =
   "Your history stays in this browser. With the AI check on, the visible tab's screenshot and text go to DriftGuard's server during sessions, are checked, and are not stored. Only the yes/no answer is kept here.";
 

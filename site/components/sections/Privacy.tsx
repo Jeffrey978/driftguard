@@ -15,7 +15,7 @@ const NEVER = [
   "Your clipboard",
   "Incognito tabs",
   "Anything outside a session",
-  "Page text or screenshots, kept anywhere",
+  "Page text or screenshots, stored anywhere",
   "Accounts, analytics or ad tracking",
 ];
 
@@ -98,7 +98,7 @@ export function Privacy() {
           </Reveal>
 
           <Reveal delay={0.06}>
-            <h3 className="text-[15px] font-bold text-white">Never recorded, in any mode</h3>
+            <h3 className="text-[15px] font-bold text-white">Never recorded, never stored</h3>
             <ul className="mt-5 space-y-3">
               {NEVER.map((t) => (
                 <li key={t} className="flex gap-3 text-[14.5px] font-semibold text-white/85">
